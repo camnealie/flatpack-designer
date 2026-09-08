@@ -1,7 +1,12 @@
 # Flatpack Designer
 
+**[camnealie.github.io/flatpack-designer](https://camnealie.github.io/flatpack-designer/)**
+
 Design a sheet-goods cabinet, see it standing up in 3D, then get the nested
 cut layout and CNC-ready DXF files for it.
+
+No account and nothing to install: the whole design lives in the URL, so
+sharing a link is how you show someone what you are making.
 
 Built on the 32mm cabinet system: shelf pin holes on a 64mm ladder, 35mm
 concealed hinge cups, mounting plates on the front 32mm column.
@@ -107,6 +112,10 @@ npm run lint
 ```
 
 ## Deploying
+
+Live at
+[camnealie.github.io/flatpack-designer](https://camnealie.github.io/flatpack-designer/),
+rebuilt on every push to `main`.
 
 The app is entirely static - no server, no API, no build-time secrets - so
 GitHub Pages hosts it as-is.
