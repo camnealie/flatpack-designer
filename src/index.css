@@ -1,0 +1,368 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* The app is a console, not a document: it fills the viewport exactly and the
+   page itself never scrolls. Only the rails and the viewports scroll. */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-console text-graphite antialiased;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Every value that moves while you drag a slider is set in tabular figures, so
+   the numbers hold their columns instead of shimmering. */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+   Dimension sliders
+   Drawn as a measurement - a thin rule that fills up to the current value -
+   rather than as a chunky control. The thumb is the only part with weight.
+   --------------------------------------------------------------------------- */
+
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 12px;
+  background: transparent;
+  cursor: ew-resize;
+}
+
+.range:focus {
+  outline: none;
+}
+
+.range::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    theme('colors.signal') 0%,
+    theme('colors.signal') var(--fill, 0%),
+    theme('colors.rule') var(--fill, 0%),
+    theme('colors.rule') 100%
+  );
+}
+
+.range::-moz-range-track {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    theme('colors.signal') 0%,
+    theme('colors.signal') var(--fill, 0%),
+    theme('colors.rule') var(--fill, 0%),
+    theme('colors.rule') 100%
+  );
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 11px;
+  height: 11px;
+  margin-top: -4px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1.5px solid theme('colors.signal');
+  box-shadow: 0 1px 2px rgb(28 32 36 / 0.18);
+  transition: transform 120ms ease-out;
+}
+
+.range::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1.5px solid theme('colors.signal');
+  box-shadow: 0 1px 2px rgb(28 32 36 / 0.18);
+  transition: transform 120ms ease-out;
+}
+
+.range:hover::-webkit-slider-thumb,
+.range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+.range:hover::-moz-range-thumb,
+.range:active::-moz-range-thumb {
+  transform: scale(1.15);
+}
+
+.range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgb(29 78 216 / 0.25);
+}
+
+.range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px rgb(29 78 216 / 0.25);
+}
+
+/* The assembly player sits on a dark ground, so its track needs to read
+   against that rather than against the console's white. */
+.range-dark::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #ffffff var(--fill, 0%),
+    rgb(255 255 255 / 0.18) var(--fill, 0%),
+    rgb(255 255 255 / 0.18) 100%
+  );
+}
+
+.range-dark::-moz-range-track {
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    #ffffff var(--fill, 0%),
+    rgb(255 255 255 / 0.18) var(--fill, 0%),
+    rgb(255 255 255 / 0.18) 100%
+  );
+}
+
+.range-dark::-webkit-slider-thumb {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.range-dark::-moz-range-thumb {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+/* Rails scroll often and are narrow, so the scrollbar stays out of the way. */
+.rail-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.rule') transparent;
+}
+
+.rail-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rail-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: theme('colors.rule');
+}
+
+.rail-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   Nesting preview motion
+   Parts keep a stable identity across re-nests, so a layout change slides them
+   to their new home instead of teleporting. Position lives on the group's
+   transform; the rect transitions its own geometry.
+   --------------------------------------------------------------------------- */
+
+.nest-part {
+  transition:
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease-out;
+  /* `backwards`, not `both`: with `both` the keyframe's final opacity keeps
+     applying forever, and an animation outranks inline styles - which silently
+     cancels the dimming that marks parts as belonging to another item. */
+  animation: nest-part-in 380ms ease-out backwards;
+}
+
+.nest-part > rect {
+  transition:
+    width 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    fill 400ms ease-out;
+}
+
+@keyframes nest-part-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* A sheet arriving or leaving is the headline event - fade it rather than
+   letting it pop into the row. */
+.nest-sheet {
+  animation: nest-part-in 420ms ease-out both;
+}
+
+/* Offcuts read as "space you could still use", so they crawl rather than sit. */
+.offcut-outline {
+  animation: offcut-in 320ms ease-out both;
+}
+
+.offcut-outline > rect {
+  animation: offcut-march 1.4s linear infinite;
+}
+
+@keyframes offcut-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes offcut-march {
+  to {
+    stroke-dashoffset: -30;
+  }
+}
+
+/* Sheet count dropping is the whole point of the tool - make it land. */
+.sheet-win {
+  animation: sheet-win 1.8s ease-out;
+}
+
+@keyframes sheet-win {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+    background-color: rgba(209, 250, 229, 0.95);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(16, 185, 129, 0);
+    background-color: rgba(209, 250, 229, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    background-color: transparent;
+  }
+}
+
+.count-pop {
+  animation: count-pop 620ms cubic-bezier(0.22, 1.4, 0.36, 1);
+  display: inline-block;
+}
+
+@keyframes count-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.55);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Export confirmation lightbox
+   --------------------------------------------------------------------------- */
+
+.lightbox-backdrop {
+  animation: fade-in 200ms ease-out both;
+}
+
+.lightbox-card {
+  animation: lightbox-in 420ms cubic-bezier(0.22, 1.3, 0.36, 1) both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tick-ring {
+  animation: tick-ring 520ms cubic-bezier(0.22, 1.35, 0.36, 1) 60ms both;
+  transform-origin: center;
+}
+
+.tick-halo {
+  animation: tick-halo 1.6s ease-out 380ms infinite;
+  transform-origin: center;
+}
+
+/* 166 is the circle's path length at r=26; the check is drawn after it closes. */
+.tick-circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: draw-stroke 520ms ease-out 120ms forwards;
+}
+
+.tick-check {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: draw-stroke 340ms cubic-bezier(0.65, 0, 0.45, 1) 520ms forwards;
+}
+
+@keyframes draw-stroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes tick-ring {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes tick-halo {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+  70% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nest-part,
+  .nest-part > rect,
+  .nest-sheet,
+  .offcut-outline,
+  .offcut-outline > rect,
+  .sheet-win,
+  .count-pop,
+  .lightbox-backdrop,
+  .lightbox-card,
+  .range::-webkit-slider-thumb,
+  .range::-moz-range-thumb,
+  .tick-ring,
+  .tick-halo,
+  .tick-circle,
+  .tick-check {
+    animation: none;
+    transition: none;
+    stroke-dashoffset: 0;
+  }
+}

@@ -1,0 +1,48 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Supplier paperwork. The quote carries a shipping address, a bank account and
+# a GST number, so it stays out of the repo - especially if this ever gets
+# pushed somewhere public. The figures it supplies live in src/lib/pricing.
+# Everything the project was built from but which must not be published:
+# supplier quotes, invoices, reference cut files, the pre-squash git history.
+# See local-only/README.md.
+local-only/
+
+# Belt and braces. These file types have only ever arrived here as supplier
+# paperwork or exports, so an accidental one in the root stays out too.
+*.pdf
+*.dxf
+*.zip
+*.mp4
+*.webm
+
+# Local Claude Code config. Carries test credentials and paths into other
+# projects on this machine, none of which belong in a repo that goes public.
+.claude/
+
+# Browser-automation scratch: screenshots, DXF exports and zips from testing.
+# Several megabytes of artefacts that say nothing a reader needs.
+.playwright-mcp/
