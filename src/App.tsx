@@ -10,7 +10,7 @@ import { Section } from './components/ui/Section';
 import { ExportSuccessModal } from './components/ExportSuccessModal';
 import { AssemblyModal } from './components/AssemblyModal';
 import { downloadAllSheetsZip, downloadCutList } from './lib/dxf/export';
-import { money, describeDelivery } from './lib/pricing/suppliers';
+import { describeDelivery } from './lib/pricing/suppliers';
 import { shareUrl } from './lib/share/url';
 
 const EXPORT_FILENAME = 'flatpack-dxf-files.zip';
@@ -60,8 +60,7 @@ function App() {
     advice: output.advice,
     manual: output.manual,
     supplier: output.supplier,
-    material: output.material,
-    price: output.price,
+    charges: output.charges,
     cuts: output.cuts,
     sheets: sheetCount,
     onSelectItem: actions.selectItem,
@@ -88,10 +87,11 @@ function App() {
           <Stat label="Waste">
             {output.nestingResult.totalWastePercentage.toFixed(1)}%
           </Stat>
-          {/* A total on its own invites the wrong assumption about delivery,
-              so it never appears without saying which way it goes. */}
-          <Stat label="Est." note={describeDelivery(output.price)}>
-            {money(output.price.total)}
+          {/* No total: the suppliers' rates are theirs to publish. What is
+              worth showing is what the job is charged against, which is what
+              actually changes how you design it. */}
+          <Stat label="Charged" note={describeDelivery(output.charges)}>
+            {output.charges.cutsAffectPrice ? 'by sheet and cut' : 'by sheet'}
           </Stat>
         </div>
 
@@ -174,7 +174,10 @@ function App() {
             {/* On a narrower screen the reference rail is gone, so the cut list
                 folds in here rather than becoming unreachable. */}
             <div className="xl:hidden">
-              <Section title="Cut list and price" summary={money(output.price.total)}>
+              <Section
+                title="Cut list and charges"
+                summary={`${totalParts} parts`}
+              >
                 <PartsList {...partsListProps} />
               </Section>
             </div>

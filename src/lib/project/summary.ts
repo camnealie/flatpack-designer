@@ -94,7 +94,7 @@ export function summariseHardware(project: Project): HardwareItem[] {
  */
 export function spilloverWarning(
   sheets: { placements: unknown[] }[],
-  marginalCost: string
+  costOfOneMore: string
 ): Warning | null {
   if (sheets.length < 2) return null;
 
@@ -109,8 +109,8 @@ export function spilloverWarning(
   return {
     message:
       `The last sheet carries ${parts === 1 ? 'a single part' : `only ${parts} parts`}, ` +
-      `and it costs ${marginalCost}. Taking a few millimetres off something, or ` +
-      'dropping one spare panel, would very likely save the whole sheet.',
+      `and it costs you ${costOfOneMore}. Taking a few millimetres off ` +
+      'something, or dropping one spare panel, would very likely save it.',
   };
 }
 

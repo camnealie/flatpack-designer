@@ -40,11 +40,10 @@ the cut count and the estimate all move together.
 - **Nesting** packs everything onto 2440 x 1220 sheets with the saw's real 4mm
   kerf between parts, and a "pack tight" mode that leaves the drop as one
   usable panel rather than scattered strips.
-- **Price** estimated per supplier from real paperwork, always labelled with
-  the invoice it came from and its date. The running total never appears
-  without saying whether shipping is in it, and shipping is Auckland only -
-  where a supplier has never quoted one, the estimate says so rather than
-  quietly reading as free.
+- **What you are charged for**, per supplier: which fees apply and what each
+  is counted against. Deliberately no rates - a supplier's pricing is theirs
+  to quote, not this app's to publish - but knowing that one bills per cut and
+  the other per sheet is the part that changes how you nest a job.
 - **How to build it** opens a full-screen guide, one step at a time: sand the
   edges, soften the ones that will show, drill the holes (or check the ones the
   CNC bored), then this panel to that one with these screws, until it stands
@@ -82,25 +81,29 @@ between nested parts, and how much work lands on your bench.
 |---|---|---|
 | Cutting | Panel saw, to size | Full CNC |
 | Holes in the DXF | A drawing for you to work from | Machined for you |
-| Charged | $40 set-up + $4 a cut | $180 a sheet |
+| Charged | set-up fee, then per cut | per sheet |
 | Kerf | 4mm blade | 10mm cutter |
 | Inside corners | Square | 5mm radius, measured from their cut files |
-| Delivery | $95 by their truck, Auckland only | Not quoted; collected from Penrose |
-| Priced from | Quotation S19801, 24 Aug 2026 | Invoice 16388, 22 Aug 2022 |
+| Delivery | Their own truck, Auckland only | Not quoted; collected from Penrose |
 
-Because Plyman charge per cut, the layout's cut count is worth deriving rather
-than guessing - see `src/lib/pricing/cuts.ts`. PPR charge a flat rate per
-sheet, so the same count is shown but does not move the price.
+Because a panel saw is charged per cut, the layout's cut count is worth
+deriving rather than guessing - see `src/lib/pricing/cuts.ts`. A CNC charged
+per sheet does not care, so the same count is shown but noted as not moving
+the bill.
 
 Neither finishes edges. The ply core shows on every cut edge, only the faces
 are laminated, and sanding and rounding over are yours either way. The app
 lists what is left to you rather than letting the DXF imply otherwise.
 
-Everything lives in `src/lib/pricing/suppliers.ts`, transcribed from the two
-invoices plus each supplier's listed prices. It is a snapshot; every figure
-carries its source and the UI dates the estimate. **The supplier paperwork
-itself is gitignored** - it carries addresses, bank accounts and GST numbers,
-which have no business in a repo that might go public.
+`src/lib/pricing/suppliers.ts` carries the shape of each supplier's bill and
+none of their rates. Both quoted this project privately, and their pricing is
+theirs to give away rather than this repo's. The paperwork it was derived from
+is gitignored too - it carries addresses, bank accounts and GST numbers.
+
+The engineering that came out of that paperwork does stay: the 4mm saw kerf,
+the 10mm cutter and its 5mm minimum internal radius, which supplier machines
+the file. Those are facts about the machines, and they are what the app needs
+to draw the right thing.
 
 ## Running it
 

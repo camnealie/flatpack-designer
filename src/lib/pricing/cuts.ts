@@ -4,8 +4,8 @@ import type { NestedSheetResult } from '../nesting/types';
 /**
  * How many cuts a layout takes on a panel saw.
  *
- * Plyman charge per cut, so this is real money - on the quoted job the cutting
- * came to $76 against $100 of material. It is worth deriving rather than
+ * A panel saw is charged per cut, so on that kind of job the cutting can rival
+ * the material for cost. That makes the count worth deriving rather than
  * guessing.
  *
  * A panel saw only makes guillotine cuts: every cut runs edge to edge across

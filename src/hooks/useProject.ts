@@ -22,11 +22,10 @@ import type { RouterBitKey } from '../lib/constants';
 import {
   getSupplier,
   getMaterial,
-  estimatePrice,
+  describeCharges,
   materialInThickness,
-  money,
 } from '../lib/pricing/suppliers';
-import type { Supplier, SheetMaterial, PriceEstimate } from '../lib/pricing/suppliers';
+import type { Supplier, SheetMaterial, ChargeSummary } from '../lib/pricing/suppliers';
 import { estimateCuts } from '../lib/pricing/cuts';
 import type { CutEstimate } from '../lib/pricing/cuts';
 import { adviseProject, sagWarnings, shelfCapWarnings } from '../lib/project/advice';
@@ -46,7 +45,7 @@ export interface ProjectOutput {
   warnings: Warning[];
   manual: string[];
   cuts: CutEstimate;
-  price: PriceEstimate;
+  charges: ChargeSummary;
   /** The radius every cut corner comes back with, mm */
   cornerRadius: number;
   /** Every hole in the job, for the build guide and the manual-work list */
@@ -132,9 +131,9 @@ export function useProject(): [ProjectOutput, ProjectActions] {
     [nestingResult, supplier.kerf]
   );
 
-  const price = useMemo(
+  const charges = useMemo(
     () =>
-      estimatePrice({
+      describeCharges({
         supplier,
         material,
         sheets: nestingResult.sheets.length,
@@ -152,13 +151,13 @@ export function useProject(): [ProjectOutput, ProjectActions] {
   );
 
   const warnings = useMemo(() => {
-    // What one more sheet actually costs here: the sheet, plus anything the
-    // supplier charges per sheet, plus GST on both
-    const perSheet =
-      (material.price + (supplier.charges.perSheet?.amount ?? 0)) *
-      (1 + supplier.charges.gstRate);
-
-    const spill = spilloverWarning(nestingResult.sheets, money(perSheet));
+    // A whole extra sheet, plus whatever the supplier charges against a sheet
+    const spill = spilloverWarning(
+      nestingResult.sheets,
+      supplier.charges.perSheet
+        ? `a whole sheet and another ${supplier.charges.perSheet.label.toLowerCase()}`
+        : 'a whole sheet'
+    );
 
     return [
       ...projectWarnings(project, thickness),
@@ -295,7 +294,7 @@ export function useProject(): [ProjectOutput, ProjectActions] {
       warnings,
       manual,
       cuts,
-      price,
+      charges,
       cornerRadius,
       holeCount,
     },

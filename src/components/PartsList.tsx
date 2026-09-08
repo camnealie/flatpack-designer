@@ -1,13 +1,8 @@
 import type { PartDefinition } from '../lib/geometry/types';
 import type { Project } from '../lib/project/types';
 import type { HardwareItem } from '../lib/project/summary';
-import type {
-  Supplier,
-  SheetMaterial,
-  PriceEstimate,
-} from '../lib/pricing/suppliers';
+import type { Supplier, ChargeSummary } from '../lib/pricing/suppliers';
 import type { CutEstimate } from '../lib/pricing/cuts';
-import { money } from '../lib/pricing/suppliers';
 import type { ItemAdvice } from '../lib/project/advice';
 import type { Fastener } from '../lib/engineering/fasteners';
 
@@ -18,8 +13,7 @@ interface PartsListProps {
   advice: ItemAdvice[];
   manual: string[];
   supplier: Supplier;
-  material: SheetMaterial;
-  price: PriceEstimate;
+  charges: ChargeSummary;
   cuts: CutEstimate;
   sheets: number;
   onSelectItem: (id: string) => void;
@@ -43,8 +37,7 @@ export function PartsList({
   advice,
   manual,
   supplier,
-  material,
-  price,
+  charges,
   cuts,
   sheets,
   onSelectItem,
@@ -188,46 +181,28 @@ export function PartsList({
         ))}
       </ul>
 
-      <RailHeading title="Estimate" aside={supplier.name} />
+      <RailHeading title="What you are charged for" aside={supplier.name} />
       <div className="px-3 pt-1">
-        <table className="w-full text-[11px]">
-          <tbody>
-            {price.lines.map((line) => (
-              <tr key={line.label} className="align-baseline">
-                <td className="py-0.5 pr-1 text-graphite/70">
-                  {line.label}
-                  {line.quantity > 1 && (
-                    <span className="tabular-nums text-graphite/40">
-                      {' '}
-                      × {line.quantity}
-                    </span>
-                  )}
-                </td>
-                <td className="py-0.5 text-right tabular-nums text-graphite">
-                  {money(line.amount)}
-                </td>
-              </tr>
-            ))}
-            <tr className="align-baseline">
-              <td className="border-t border-rule pt-1 text-graphite/50">GST 15%</td>
-              <td className="border-t border-rule pt-1 text-right tabular-nums
-                text-graphite/50">
-                {money(price.gst)}
-              </td>
-            </tr>
-            <tr className="align-baseline">
-              <td className="pt-0.5 text-[12px] font-medium text-graphite">Total</td>
-              <td className="pt-0.5 text-right text-[13px] font-semibold tabular-nums
-                text-graphite">
-                {money(price.total)}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <ul>
+          {charges.lines.map((line) => (
+            <li
+              key={line.label}
+              className="flex items-baseline justify-between gap-2 border-b
+                border-rule/50 py-1 last:border-0"
+            >
+              <span className="min-w-0 flex-1 text-[12px] text-graphite">
+                {line.label}
+              </span>
+              <span className="shrink-0 text-[11px] tabular-nums text-graphite/50">
+                {line.basis}
+              </span>
+            </li>
+          ))}
+        </ul>
 
-        {/* Delivery sits with the total rather than in a settings panel: it is
-            the line most likely to be wrong about, and the one people most
-            want to flip while looking at the number it changes. */}
+        {/* Delivery sits with the charges rather than in a settings panel: it
+            is the line most likely to be wrong about, and the one people most
+            want to flip while looking at what it changes. */}
         <div className="mt-2 rounded border border-rule bg-console/60 px-2 py-1.5">
           {supplier.charges.freight ? (
             <>
@@ -243,9 +218,6 @@ export function PartsList({
                 <span className="flex-1">
                   Deliver to {supplier.charges.freight.area}
                 </span>
-                <span className="tabular-nums text-graphite/60">
-                  {money(supplier.charges.freight.amount)}
-                </span>
               </label>
               <p className="mt-1 pl-5 text-[10px] leading-snug text-graphite/45">
                 {supplier.deliveryNote}
@@ -260,29 +232,27 @@ export function PartsList({
         </div>
 
         <p className="mt-2 text-[10px] leading-snug text-graphite/45">
-          Estimate only, priced from {supplier.name} {supplier.quote.reference} of{' '}
-          {supplier.quote.dateLabel}
-          {material.source === 'listed' && ', with this sheet at its listed price'}.
-          Prices, stock and fees change &mdash; confirm before ordering.
-          {supplier.quote.note && ` ${supplier.quote.note}`}
+          No prices here &mdash; {supplier.name}&rsquo;s rates are theirs to
+          quote, not this app&rsquo;s to publish. Send them the cut list for a
+          current price.
         </p>
 
         <p className="mt-1 text-[10px] leading-snug text-graphite/45">
           {sheets === 1 ? 'One sheet' : `${sheets} sheets`}
-          {price.cutsAffectPrice ? (
+          {charges.cutsAffectPrice ? (
             <>
               , {cuts.cuts} cuts
               {cuts.exact
                 ? ' worked out from the layout'
                 : ' (approximate: this layout is not one a panel saw can cut straight through)'}
+              . Fewer of either is less to pay.
             </>
           ) : (
             <>
-              . {supplier.name} charge a flat rate per sheet, so the{' '}
-              {cuts.cuts}-cut layout costs the same as any other
+              . {supplier.name} charge against the sheet, not the cut, so the{' '}
+              {cuts.cuts}-cut layout costs the same as any other.
             </>
           )}
-          .
         </p>
       </div>
     </div>

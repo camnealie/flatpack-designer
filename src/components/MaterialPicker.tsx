@@ -1,5 +1,4 @@
 import type { Supplier, SheetMaterial } from '../lib/pricing/suppliers';
-import { money } from '../lib/pricing/suppliers';
 
 interface MaterialPickerProps {
   supplier: Supplier;
@@ -92,9 +91,6 @@ export function MaterialPicker({
                   }`}
               >
                 {option.thickness}mm
-                <span className="ml-1 text-graphite/40">
-                  {money(option.price)}
-                </span>
               </button>
             );
           })}
