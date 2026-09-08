@@ -2,10 +2,12 @@ import type { Project, ProjectItem, ItemKind, CabinetItem } from './types';
 import { DEFAULT_SUPPLIER_ID, getSupplier } from '../pricing/suppliers';
 
 /**
- * Something to open on: one cabinet with doors, some loose shelves, and a
- * couple of panels cut from what is left of the sheet. Sized so the starting
- * job fits on a single sheet, since watching that hold or break as you change
- * things is most of what the app is for.
+ * What someone sees before they have done anything.
+ *
+ * One plain bookcase, no doors. A first screen has to be read before it can be
+ * used, so it holds one thing rather than four, and that thing is open at the
+ * front - the 3D view is the app's explanation of itself, and doors close it.
+ * Everything else is one click away under Add.
  */
 export function defaultProject(): Project {
   const items: ProjectItem[] = [
@@ -13,46 +15,28 @@ export function defaultProject(): Project {
       id: 'cabinet-1',
       kind: 'cabinet',
       name: 'Shelving cabinet',
-      width: 600,
-      height: 700,
+      // An ordinary bookcase, sized to land on a single sheet. Taller than
+      // about 1600 and the two long sides stop leaving room for the shelves
+      // beside them, which tips the job onto a second sheet - a first screen
+      // reading "2 sheets, 56% waste" says the tool is bad at its job rather
+      // than that the design is.
+      width: 800,
+      height: 1600,
       depth: 280,
-      adjustableShelves: 1,
+      adjustableShelves: 4,
       duty: 'normal',
       fixedTop: true,
       fixedBottom: true,
       backStyle: 'rails',
       backBraces: 2,
       backBraceHeight: 100,
-      doors: true,
+      // Off to begin with. Doors are the one thing that hides the inside of
+      // the model, and hiding it is a poor way to open.
+      doors: false,
       doorCount: 2,
       doorGap: 3,
       hingeStyle: 'no-bore',
       doorHingeSide: 'left',
-    },
-    {
-      id: 'shelves-1',
-      kind: 'shelves',
-      name: 'Wall shelves',
-      width: 1000,
-      depth: 280,
-      quantity: 2,
-      duty: 'normal',
-    },
-    {
-      id: 'panel-1',
-      kind: 'panel',
-      name: 'Bench top',
-      width: 1200,
-      height: 350,
-      quantity: 1,
-    },
-    {
-      id: 'panel-2',
-      kind: 'panel',
-      name: 'Bench strip',
-      width: 1475,
-      height: 190,
-      quantity: 1,
     },
   ];
 
